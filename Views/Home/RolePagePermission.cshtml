@@ -1,0 +1,219 @@
+﻿@model UM_System.Models.RolePagePermission
+@{
+    ViewData["Title"] = "Permissions";
+    var Roles = ViewBag.roles as List<Role>;
+    var Pages = ViewBag.pages as List<Page>;
+    var permission = ViewBag.permission as List<RolePagePermission>;
+
+}
+
+<h1>Assign Pages</h1>
+
+<h4>Permission</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Permission" asp-controller="Home" method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger">AppName</div>
+            <div class="form-group">
+                <label asp-for="RoleId" class="control-label"></label>
+                <select asp-for="RoleId" name="RoleId" class="form-control" required>
+                    <option value="" selected disabled>-- Select an Role --</option>
+                    @foreach (var role in Roles)
+                    {
+                        <option value="@role.Id">@role.Name</option>
+                    }
+                </select>
+                <span asp-validation-for="RoleId" class="text-danger"></span>
+            </div>
+
+
+            <div class="form-group">
+                <label asp-for="PageId" class="control-label"></label>
+                <select asp-for="PageId" class="form-control" required>
+                    <option value="" selected disabled>-- Select an Role --</option>
+                    @foreach (var Page in Pages)
+                    {
+                        <option value="@Page.Id">@Page.Name</option>
+                    }
+                </select>
+                <span asp-validation-for="PageId" class="text-danger"></span>
+            </div>
+
+
+            <div class="form-group">
+                <label class="control-label">Allow access</label>
+                <select asp-for="CanView" class="form-control" required>
+                    @* <option value="" disabled selected>-- Select an Option --</option> *@
+                    <option value="false">False</option>
+                    <option value="true">True</option>
+
+                </select>
+                <span asp-validation-for="CanView" class="text-danger"></span>
+            </div>
+
+            <input type="hidden" asp-for="Created_at" value="@DateTime.Now" />
+            <div class="form-group mt-1">
+                <button type="submit" class="btn btn-primary">Assign</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+
+<br />
+
+
+
+<h1>Index</h1>
+
+<p>
+    <a asp-action="Permission">Create New</a>
+
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @* @Html.DisplayNameFor(model => model.Id) *@
+                S no.
+            </th>
+
+            <th>
+                @*  @Html.DisplayNameFor(model => model.RoleId) *@
+                Role
+            </th>
+            <th>
+                Page
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.CanView)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Created_at)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Updated_at)
+            </th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (permission != null)
+        {
+            var i = 0;
+            @foreach (var item in permission)
+            {
+                i++; 
+                var RoleName = Roles.FirstOrDefault(a => a.Id == item.RoleId)?.Name ?? "Unknown";
+                var PageName = Pages.FirstOrDefault(a => a.Id == item.PageId)?.Name ?? "Unknown";
+
+                <tr>
+                    <td> @i </td>
+                    <td>
+                        @RoleName
+                    </td>
+
+                    <td>
+
+                        @PageName
+                    </td>
+                    <td>
+
+                        @* //NEw WOrk SERCH FOR AJAX///// *@
+
+                        @* <span class="can-view-text">@item.CanView</span> *@
+
+                        <select class="can-view-dropdown form-control" data-id="@item.Id" disabled>
+                            <option value="true" selected="@(item.CanView == true)">True</option>
+                            <option value="false" selected="@(item.CanView == false)">False</option>
+                        </select>
+
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Created_at)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Updated_at)
+                    </td>
+                    <td>
+                        <button class="btn btn-primary ml-3 edit" data-id="@item.Id">Edit</button>
+                        <button class="btn btn-success ml-3 save" data-id="@item.Id">Save</button>
+                        
+                        @*   <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a> *@
+                    </td>
+                </tr>
+            }
+
+        }
+        else
+        {
+            <tr><td colspan="6" class="fw-bold text-center my-3">No Record Found</td></tr>
+        }
+
+    </tbody>
+</table>
+
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('.save').hide();
+            // Handle Edit Button Click
+            $(document).on('click',".edit", function () {
+                console.log("hello ")
+                const rowId = $(this).data('id');
+
+                $(`.edit[data-id=${rowId}]`).hide();
+                $(`.save[data-id=${rowId}]`).show();
+                
+                const dropdown = $(`.can-view-dropdown[data-id=${rowId}]`);
+                dropdown.prop('disabled', false);
+            });
+
+            $(document).on('click', ".save", function () {
+                const rowId = $(this).data('id');
+                const newValue = $(`.can-view-dropdown[data-id=${rowId}]`).val();
+
+                $.ajax({
+                    url: '/Home/UpdateCanView', 
+                    type: 'POST',
+                    data: {
+                        id: rowId,
+                        canView: newValue
+                    },
+                    success: function (response) {
+                        if (response.success) {
+                            alert('Value updated successfully!');
+                            $(`.save[data-id=${rowId}]`).hide();
+                            $(`.edit[data-id=${rowId}]`).show();
+
+                            const dropdown = $(`.can-view-dropdown[data-id=${rowId}]`);
+                            dropdown.prop('disabled', true);
+                        } else {
+                            alert('Failed to update value!');
+                            $(`.save[data-id=${rowId}]`).hide();
+                            $(`.edit[data-id=${rowId}]`).show();
+
+                            const dropdown = $(`.can-view-dropdown[data-id=${rowId}]`);
+                            dropdown.prop('disabled', true);
+                        }
+                    },
+                    error: function () {
+                        alert('An error occurred while updating the value.');
+                    }
+                });
+            });
+        });
+    </script>
+
+   }

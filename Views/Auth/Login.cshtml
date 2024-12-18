@@ -1,0 +1,45 @@
+﻿@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Login</title>
+
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/UM_System.styles.css" asp-append-version="true" />
+</head>
+<body>
+    <div class="d-flex flex-column py-3 gap-3 justify-content-center align-items-center w-100 text-center">
+        <h2>Login</h2>
+        <form class="form-control w-50 h-100 p-5" method="post" action="/Auth/Login">
+            <div class="row mb-3">
+                <label for="username" class="col-sm-2 col-form-label">Username</label>
+                <div class="col-sm-10">
+                    <input type="username" name="username" class="form-control" id="username">
+                </div>
+            </div>
+            <div class="row mb-3">
+                <label for="inputPassword3" class="col-sm-2 col-form-label">Password</label>
+                <div class="col-sm-10">
+                    <input type="password" name="password" class="form-control" id="inputPassword3">
+                </div>
+            </div>
+            <button type="submit" class="btn btn-primary">Sign in</button>
+        </form>
+        @if (ViewBag.Error != null)
+        {
+        <p style="color:red;">@ViewBag.Error</p>
+        }
+    </div>
+   
+
+ 
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+</body>
+</html>

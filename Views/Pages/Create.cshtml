@@ -1,0 +1,54 @@
+﻿@model UM_System.Models.Page
+
+@{
+    ViewData["Title"] = "Create";
+    var apps = ViewBag.apps as List<Application>;
+}
+
+<h1>Create</h1>
+
+<h4>Page</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Create">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="ApplicationId" class="control-label">AppName</label>
+                <select asp-for="ApplicationId" class="form-control">
+                    <option value="" selected disabled>-- Select an Application --</option>
+                    @foreach (var app in apps)
+                    {
+                        <option value="@app.Id">@app.Name</option>
+                    }
+                </select>
+                <span asp-validation-for="ApplicationId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Name" class="control-label"></label>
+                <input asp-for="Name" class="form-control" placeholder="Name" />
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Url" class="control-label"></label>
+                <input asp-for="Url" class="form-control" placeholder="e.g /home/index" />
+                <span asp-validation-for="Url" class="text-danger"></span>
+            </div>
+           
+                
+            <input type="hidden" asp-for="Created_at" value="@DateTime.Now" />
+
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

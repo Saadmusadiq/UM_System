@@ -1,0 +1,25 @@
+﻿@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Access Denied</title>
+
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/UM_System.styles.css" asp-append-version="true" />
+</head>
+<body>
+    <div class="d-flex flex-column py-5 gap-3 justify-content-center align-items-center w-100 text-center">
+
+    <button type="button" class="btn-close bg-danger" style="height:2rem; width:2rem" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+    </button>
+    <h1 class="font-monospace">Access Denied</h1>
+    <p class="text-lg">You do not have permission to access this resource.</p>
+        <a href="/Auth/Login" class="btn btn-primary h-25 w-25">Login</a>
+    </div>
+</body>
+</html>
